@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project (OpenGL-Learn)
+project (OpenGLPractice)
 
 # find_package查找时需要用到CMAKE_MODULE_PATH
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 if(WIN32)
 	# exe输出路径
@@ -13,17 +13,30 @@ endif(WIN32)
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 
 set(Include_Path 
+	${CMAKE_SOURCE_DIR}/src
+
 	${CMAKE_SOURCE_DIR}/thirdParty/GLFW/include
 	${CMAKE_SOURCE_DIR}/thirdParty/glad/include
+	${CMAKE_SOURCE_DIR}/thirdParty/stbImage/include
+	${CMAKE_SOURCE_DIR}/thirdParty/assimp/include
+	${CMAKE_SOURCE_DIR}/thirdParty
 )
 
 set(Lib_Path
 	${CMAKE_SOURCE_DIR}/thirdParty/GLFW/lib
+	${CMAKE_SOURCE_DIR}/thirdParty/assimp/lib
 )
 
 if(WIN32)
-  set(LIBS glfw3 opengl32)
+  set(LIBS glfw3 opengl32 assimp)
 endif(WIN32)
+
+configure_file(configuration/root_directory.h.in configuration/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/configuration)
+
+# first create relevant static libraries requried for other projects
+add_library(STB_IMAGE "thirdParty/stbImage/src/stb_image.cpp")
+set(LIBS ${LIBS} STB_IMAGE)
 
 # glad
 add_library(GLAD "thirdParty/glad/src/glad.c")
@@ -34,7 +47,7 @@ set(CHAPTERS
 )
 
 set(basic
-	init_window
+	init_triangle
 )
 
 include_directories(${Include_Path})
@@ -48,6 +61,8 @@ foreach(CHAPTER ${CHAPTERS})
             "src/${CHAPTER}/${DEMO}/*.vs"
             "src/${CHAPTER}/${DEMO}/*.fs"
             "src/${CHAPTER}/${DEMO}/*.gs"
+
+			"src/common/*.h"
         )
 		set(NAME "${CHAPTER}__${DEMO}")
 		add_executable(${NAME} ${SOURCE})
