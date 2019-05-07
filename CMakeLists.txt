@@ -19,6 +19,7 @@ set(Include_Path
 	${CMAKE_SOURCE_DIR}/thirdParty/glad/include
 	${CMAKE_SOURCE_DIR}/thirdParty/stbImage/include
 	${CMAKE_SOURCE_DIR}/thirdParty/assimp/include
+	${CMAKE_SOURCE_DIR}/thirdParty/imgui
 	${CMAKE_SOURCE_DIR}/thirdParty
 )
 
@@ -42,6 +43,12 @@ set(LIBS ${LIBS} STB_IMAGE)
 add_library(GLAD "thirdParty/glad/src/glad.c")
 set(LIBS ${LIBS} GLAD)
 
+# imgui
+file(GLOB IMGUI_SOURCE
+	"thirdParty/imgui/*.h"
+	"thirdParty/imgui/*.cpp"
+)
+
 set(CHAPTERS
     basic
 )
@@ -61,11 +68,15 @@ foreach(CHAPTER ${CHAPTERS})
             "src/${CHAPTER}/${DEMO}/*.vs"
             "src/${CHAPTER}/${DEMO}/*.fs"
             "src/${CHAPTER}/${DEMO}/*.gs"
-
-			"src/common/*.h"
         )
+
+		file(GLOB COMMON_SOURCE
+			"src/common/*.h"
+			"src/common/*.cpp"
+		)
+
 		set(NAME "${CHAPTER}__${DEMO}")
-		add_executable(${NAME} ${SOURCE})
+		add_executable(${NAME} ${SOURCE} ${COMMON_SOURCE} ${IMGUI_SOURCE})
         target_link_libraries(${NAME} ${LIBS})
 		if(WIN32)
             #set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${CHAPTER}")
@@ -73,3 +84,12 @@ foreach(CHAPTER ${CHAPTERS})
 
 	endforeach(DEMO)
 endforeach(CHAPTER)
+
+# 将文件归类到文件夹中
+source_group(common FILES 
+	${COMMON_SOURCE}
+)
+
+source_group(imgui FILES 
+	${IMGUI_SOURCE}
+)
