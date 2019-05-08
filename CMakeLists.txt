@@ -6,8 +6,7 @@ project (OpenGLPractice)
 # set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 if(WIN32)
-	# exe输出路径
-	#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+	Add_Definitions(-DPLATFORM_WINDOWS=1)
 endif(WIN32)
 
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
@@ -25,11 +24,11 @@ set(Include_Path
 
 set(Lib_Path
 	${CMAKE_SOURCE_DIR}/thirdParty/GLFW/lib
-	${CMAKE_SOURCE_DIR}/thirdParty/assimp/lib
+	${CMAKE_SOURCE_DIR}/thirdParty/assimp/lib/x64
 )
 
 if(WIN32)
-  set(LIBS glfw3 opengl32 assimp)
+  set(LIBS glfw3 opengl32 assimp-vc140-mt)
 endif(WIN32)
 
 configure_file(configuration/root_directory.h.in configuration/root_directory.h)
@@ -54,7 +53,8 @@ set(CHAPTERS
 )
 
 set(basic
-	init_triangle
+	initTriangle
+	drawInstance
 )
 
 include_directories(${Include_Path})
@@ -79,6 +79,8 @@ foreach(CHAPTER ${CHAPTERS})
 		add_executable(${NAME} ${SOURCE} ${COMMON_SOURCE} ${IMGUI_SOURCE})
         target_link_libraries(${NAME} ${LIBS})
 		if(WIN32)
+			# Set work directory for Visual Studio 
+			set_property(TARGET ${NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/data")
             #set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${CHAPTER}")
 		endif(WIN32)
 

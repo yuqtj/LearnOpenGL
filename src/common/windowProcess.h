@@ -5,6 +5,8 @@
 
 #include <common/camera.h>
 #include <glfw3.h>
+#include <glm/glm.hpp>
+
 
 class AppWindow
 {
@@ -20,6 +22,10 @@ public:
 	inline void setCamera(Camera* val) { m_camera = val; }
 
 	inline GLFWwindow* getWindow() const { return m_window; }
+
+	inline float getAspect() { return m_width * 1.0f / m_height; }
+
+	inline glm::mat4 getViewMatrix() { return getCamera()->GetViewMatrix(); }
 
 	void mouse_callback(double xpos, double ypos);
 	void scroll_callback(double xoffset, double yoffset);

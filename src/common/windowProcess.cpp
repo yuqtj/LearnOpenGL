@@ -5,6 +5,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#ifdef PLATFORM_WINDOWS
+#endif // PLATFORM_WINDOWS
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -17,7 +20,7 @@ AppWindow::AppWindow(int width, int height) :
 {
 	init();
 
-	m_camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	m_camera = new Camera(glm::vec3(0.0f, 0.0f, 20.0f));
 }
 
 AppWindow::~AppWindow()
@@ -93,6 +96,9 @@ int AppWindow::init()
 		return -1;
 	}
 
+	// 关闭垂直同步
+	glfwSwapInterval(0);
+
 	initImgui();
 
 	return 1;
@@ -123,6 +129,12 @@ void AppWindow::beginRenderImgui()
 
 void AppWindow::endRenderImgui()
 {
+	{
+		ImGui::Begin("FPS");
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+	}
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	//ImGui::EndFrame();
