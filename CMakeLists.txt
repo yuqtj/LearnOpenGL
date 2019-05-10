@@ -9,6 +9,9 @@ if(WIN32)
 	Add_Definitions(-DPLATFORM_WINDOWS=1)
 endif(WIN32)
 
+Add_Definitions(-DCSF_ZIP_SUPPORT=1)
+
+
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 
 set(Include_Path 
@@ -50,6 +53,7 @@ file(GLOB IMGUI_SOURCE
 
 set(CHAPTERS
     basic
+	advance
 )
 
 set(basic
@@ -57,21 +61,27 @@ set(basic
 	drawInstance
 )
 
+set(advance
+	Occlusion
+)
+
 include_directories(${Include_Path})
 link_directories(${Lib_Path})
 
 foreach(CHAPTER ${CHAPTERS})
     foreach(DEMO ${${CHAPTER}})
-        file(GLOB SOURCE
+        file(GLOB_RECURSE SOURCE
             "src/${CHAPTER}/${DEMO}/*.h"
+			"src/${CHAPTER}/${DEMO}/*.hpp"
             "src/${CHAPTER}/${DEMO}/*.cpp"
             "src/${CHAPTER}/${DEMO}/*.vs"
             "src/${CHAPTER}/${DEMO}/*.fs"
             "src/${CHAPTER}/${DEMO}/*.gs"
         )
 
-		file(GLOB COMMON_SOURCE
+		file(GLOB_RECURSE COMMON_SOURCE
 			"src/common/*.h"
+			"src/common/*.hpp"
 			"src/common/*.cpp"
 		)
 
@@ -83,6 +93,13 @@ foreach(CHAPTER ${CHAPTERS})
 			set_property(TARGET ${NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/data")
             #set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${CHAPTER}")
 		endif(WIN32)
+
+		foreach(SHADER ${SHADERS})
+            if(WIN32)
+                # configure_file(${SHADER} "test")
+                add_custom_command(TARGET ${NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SHADER} $<TARGET_FILE_DIR:${NAME}>)
+            endif(WIN32)
+        endforeach(SHADER)
 
 	endforeach(DEMO)
 endforeach(CHAPTER)

@@ -32,8 +32,10 @@ public:
     string directory;
     bool gammaCorrection;
 
+	glm::mat4 worldMatrix;
+
     /*  Functions   */
-    // constructor, expects a filepath to a 3D model.
+    // use assimp import model
     Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
     {
         loadModel(path);

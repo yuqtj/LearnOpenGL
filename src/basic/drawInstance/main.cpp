@@ -16,12 +16,10 @@ int main()
 	// build and compile shaders
 	// -------------------------
 	Shader asteroidShader(FileSystem::getPath("data/shader/10.3.asteroids.vs").c_str(), FileSystem::getPath("data/shader/10.3.asteroids.fs").c_str());
-	//Shader planetShader(FileSystem::getPath("data/shader/10.3.planet.vs").c_str(), FileSystem::getPath("data/shader/10.3.planet.fs").c_str());
 
 	// load models
 	// -----------
 	Model rock(FileSystem::getPath("data/model/rock/rock.obj"));
-	//Model planet(FileSystem::getPath("data/model/planet/planet.obj"));
 
 	unsigned int amount = 100000;
 	glm::mat4* modelMatrices;
@@ -102,19 +100,7 @@ int main()
 		asteroidShader.use();
 		asteroidShader.setMat4("projection", projection);
 		asteroidShader.setMat4("view", view);
-		//planetShader.use();
-		//planetShader.setMat4("projection", projection);
-		//planetShader.setMat4("view", view);
 
-		//// draw planet
-		//glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-		//planetShader.setMat4("model", model);
-		//planet.Draw(planetShader);
-
-		// draw meteorites
-		asteroidShader.use();
 		asteroidShader.setInt("texture_diffuse1", 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, rock.textures_loaded[0].id); // note: we also made the textures_loaded vector public (instead of private) from the model class.

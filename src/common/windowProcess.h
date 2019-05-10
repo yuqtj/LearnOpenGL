@@ -26,6 +26,7 @@ public:
 	inline float getAspect() { return m_width * 1.0f / m_height; }
 
 	inline glm::mat4 getViewMatrix() { return getCamera()->GetViewMatrix(); }
+	inline glm::mat4 getProjectionMatrix() { return glm::perspective(glm::radians(getCamera()->Zoom), getAspect(), 0.1f, 1000.0f); }
 
 	void mouse_callback(double xpos, double ypos);
 	void scroll_callback(double xoffset, double yoffset);
